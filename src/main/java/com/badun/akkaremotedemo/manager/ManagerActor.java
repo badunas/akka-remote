@@ -8,6 +8,7 @@ import akka.pattern.AskableActorSelection;
 import akka.util.Timeout;
 import com.badun.akkaremotedemo.message.PieceOfWork;
 import com.badun.akkaremotedemo.message.WorkDone;
+import com.badun.akkaremotedemo.util.Selector;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -36,25 +37,12 @@ public class ManagerActor extends AbstractActor {
 
     private void handleTimeoutMessage(ReceiveTimeout timeout) {
         try {
-            ActorRef worker = getWorker();
+            ActorRef worker = Selector.select(initialWorkerPath, getContext());
             worker.tell(buildWorkMessage(), self());
             log.info("[MANAGER] Manager send a peace of work to worker after timeout.");
         } catch (Exception e) {
             log.error("Worker not found. " + e.getMessage());
         }
-    }
-
-    private ActorRef getWorker() throws Exception {
-        ActorSelection actorSelection = getContext().actorSelection(initialWorkerPath);
-        AskableActorSelection askableActorSelection = new AskableActorSelection(actorSelection);
-        Timeout timeout = new Timeout(5, TimeUnit.SECONDS);
-        Future<Object> fut = askableActorSelection.ask(new Identify(1), timeout);
-        ActorIdentity ident = (ActorIdentity)Await.result(fut, timeout.duration());
-        ActorRef ref = ident.getRef();
-        if (ref == null) {
-            throw new RuntimeException("Can't select a remote worker.");
-        }
-        return ref;
     }
 
     private void handleWorkerMessage(WorkDone message) {
