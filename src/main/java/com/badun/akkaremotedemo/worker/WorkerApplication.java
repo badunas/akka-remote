@@ -2,6 +2,8 @@ package com.badun.akkaremotedemo.worker;
 
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.routing.FromConfig;
+import com.badun.akkaremotedemo.manager.ManagerActor;
 import com.typesafe.config.ConfigFactory;
 
 /**
@@ -11,6 +13,8 @@ public class WorkerApplication {
 
     public static void main(String[] args) {
         ActorSystem system = ActorSystem.create("WorkerSystem", ConfigFactory.load("worker"));
-        system.actorOf(Props.create(WorkerActor.class), "worker");
+        Props workerActorProps = Props.create(WorkerActor.class);
+        Props workerRouterProps = FromConfig.getInstance().props(workerActorProps);
+        system.actorOf(workerRouterProps, "worker-router");
     }
 }

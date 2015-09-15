@@ -1,7 +1,5 @@
 package com.badun.akkaremotedemo.message;
 
-import akka.actor.ActorRef;
-
 /**
  * Created by Artsiom Badun.
  */

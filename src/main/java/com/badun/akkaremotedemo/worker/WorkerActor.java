@@ -7,6 +7,9 @@ import akka.japi.pf.ReceiveBuilder;
 import com.badun.akkaremotedemo.message.PieceOfWork;
 import com.badun.akkaremotedemo.message.WorkDone;
 import com.badun.akkaremotedemo.util.Sleeper;
+import scala.concurrent.duration.Duration;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Artsiom Badun.
@@ -25,6 +28,7 @@ public class WorkerActor extends AbstractActor {
     private void handleWorkMessage(PieceOfWork message) {
         Sleeper.sleep(1);
         log.info("[WORKER] Actor handled message: " + message);
-        sender().tell(new WorkDone(), self());
+        sender().tell(new WorkDone(), context().parent());
+        sender().tell(new WorkDone(), context().parent());
     }
 }

@@ -6,15 +6,12 @@ import akka.event.LoggingAdapter;
 import akka.japi.pf.ReceiveBuilder;
 import akka.pattern.AskableActorSelection;
 import akka.util.Timeout;
-import com.badun.akkaremotedemo.message.ManagerTimeout;
 import com.badun.akkaremotedemo.message.PieceOfWork;
 import com.badun.akkaremotedemo.message.WorkDone;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
-import scala.concurrent.duration.FiniteDuration;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,7 +37,7 @@ public class ManagerActor extends AbstractActor {
     private void handleTimeoutMessage(ReceiveTimeout timeout) {
         try {
             ActorRef worker = getWorker();
-            worker.tell(new PieceOfWork("Task N" + taskNumber++), self());
+            worker.tell(buildWorkMessage(), self());
             log.info("[MANAGER] Manager send a peace of work to worker after timeout.");
         } catch (Exception e) {
             log.error("Worker not found. " + e.getMessage());
@@ -61,7 +58,11 @@ public class ManagerActor extends AbstractActor {
     }
 
     private void handleWorkerMessage(WorkDone message) {
-        sender().tell(new PieceOfWork("Task N" + taskNumber++), self());
+        sender().tell(buildWorkMessage(), self());
         log.info("[MANAGER] Manager send a peace of work to worker by worker request.");
+    }
+
+    private PieceOfWork buildWorkMessage() {
+        return new PieceOfWork("Task: " + self().path() + "_" + taskNumber++);
     }
 }
