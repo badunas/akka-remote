@@ -7,9 +7,6 @@ import akka.japi.pf.ReceiveBuilder;
 import com.badun.akkaremotedemo.message.PieceOfWork;
 import com.badun.akkaremotedemo.message.WorkDone;
 import com.badun.akkaremotedemo.util.Sleeper;
-import scala.concurrent.duration.Duration;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Artsiom Badun.

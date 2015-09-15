@@ -3,7 +3,6 @@ package com.badun.akkaremotedemo.worker;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.routing.FromConfig;
-import com.badun.akkaremotedemo.manager.ManagerActor;
 import com.typesafe.config.ConfigFactory;
 
 /**

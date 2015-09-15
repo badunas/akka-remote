@@ -1,16 +1,14 @@
 package com.badun.akkaremotedemo.manager;
 
-import akka.actor.*;
+import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
+import akka.actor.ReceiveTimeout;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.ReceiveBuilder;
-import akka.pattern.AskableActorSelection;
-import akka.util.Timeout;
 import com.badun.akkaremotedemo.message.PieceOfWork;
 import com.badun.akkaremotedemo.message.WorkDone;
 import com.badun.akkaremotedemo.util.Selector;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 import java.util.concurrent.TimeUnit;
