@@ -29,8 +29,12 @@ public class ManagerActor extends AbstractActor {
                 .matchAny(this::unhandled)
                 .build());
         this.initialWorkerPath = initialWorkerPath;
-        context().setReceiveTimeout(Duration.create(5, TimeUnit.SECONDS));
         log.debug("Created manager actor with initialWorkerPath: " + initialWorkerPath);
+    }
+
+    @Override
+    public void preStart() {
+        context().setReceiveTimeout(Duration.create(5, TimeUnit.SECONDS));
     }
 
     private void handleTimeoutMessage(ReceiveTimeout timeout) {
