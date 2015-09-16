@@ -6,8 +6,7 @@ import akka.actor.ReceiveTimeout;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.ReceiveBuilder;
-import com.badun.akkaremotedemo.message.PieceOfWork;
-import com.badun.akkaremotedemo.message.WorkDone;
+import com.badun.akkaremotedemo.message.Msg;
 import com.badun.akkaremotedemo.util.Selector;
 import scala.concurrent.duration.Duration;
 
@@ -25,7 +24,7 @@ public class ManagerActor extends AbstractActor {
     public ManagerActor(String initialWorkerPath) {
         receive(ReceiveBuilder
                 .match(ReceiveTimeout.class, this::handleTimeoutMessage)
-                .match(WorkDone.class, this::handleWorkerMessage)
+                .match(Msg.WorkDone.class, this::handleWorkerMessage)
                 .matchAny(this::unhandled)
                 .build());
         this.initialWorkerPath = initialWorkerPath;
@@ -47,12 +46,12 @@ public class ManagerActor extends AbstractActor {
         }
     }
 
-    private void handleWorkerMessage(WorkDone message) {
+    private void handleWorkerMessage(Msg.WorkDone message) {
         sender().tell(buildWorkMessage(), self());
         log.info("[MANAGER] Manager send a peace of work to worker by worker request.");
     }
 
-    private PieceOfWork buildWorkMessage() {
-        return new PieceOfWork("Task: " + self().path() + "_" + taskNumber++);
+    private Msg.PieceOfWork buildWorkMessage() {
+        return new Msg.PieceOfWork("Task: " + self().path() + "_" + taskNumber++);
     }
 }
