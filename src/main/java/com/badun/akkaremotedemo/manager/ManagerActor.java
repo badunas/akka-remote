@@ -22,6 +22,7 @@ public class ManagerActor extends AbstractActor {
     private int taskNumber = 1000;
 
     public ManagerActor(String initialWorkerPath) {
+        // Message class - handler mapping.
         receive(ReceiveBuilder
                 .match(ReceiveTimeout.class, this::handleTimeoutMessage)
                 .match(Msg.WorkDone.class, this::handleWorkerMessage)
@@ -33,11 +34,13 @@ public class ManagerActor extends AbstractActor {
 
     @Override
     public void preStart() {
+        // Schedule to send ReceiveTimeout messages to itself.
         context().setReceiveTimeout(Duration.create(5, TimeUnit.SECONDS));
     }
 
     private void handleTimeoutMessage(ReceiveTimeout timeout) {
         try {
+            // Select an available actor with the specified actor path.
             ActorRef worker = Selector.select(initialWorkerPath, getContext());
             worker.tell(buildWorkMessage(), self());
             log.info("[MANAGER] Manager send a peace of work to worker after timeout.");
